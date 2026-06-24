@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  postgres-user:
+    image: postgres:18
+    container_name: postgres-user
+    environment:
+      POSTGRES_DB: job_portal_user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql
+    networks:
+      - job-portal-network
+
+volumes:
+  postgres-user-data:
+
+networks:
+  job-portal-network:
