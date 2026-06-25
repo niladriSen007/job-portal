@@ -13,6 +13,7 @@ import com.niladri.userservice.mapper.Mapper;
 import com.niladri.userservice.repository.AuthRepository;
 import com.niladri.userservice.security.AppUserDetailsService;
 import com.niladri.userservice.security.JWTService;
+import com.niladri.userservice.security.UserInfoService;
 import com.niladri.userservice.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,12 +89,13 @@ public class AuthServiceImpl implements IAuthService {
 
         Authentication authentication = authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Optional<UserEntity> user = authRepository.findByEmail(loginRequest.getEmail());
 
+//        Optional<UserEntity> user = authRepository.findByEmail(loginRequest.getEmail());
+        UserInfoService principal = (UserInfoService) authentication.getPrincipal();
+        Optional<UserEntity> user = authRepository.findByEmail(principal.getUsername());
         String accessToken = jwtService.generateAccessToken(authentication, user.get().getId());
-
         user.get().setLastLoggedInTime(LocalDateTime.now());
         authRepository.save(user.get());
 

@@ -46,4 +46,26 @@ public class AppUserDetailsService implements UserDetailsService {
                 grantedAuthorities
         );
     }
+
+
+    public UserInfoService loadUserByUserId(String id) {
+        //Find the user in the database
+        Optional<UserEntity> user = authRepository.findById(Long.valueOf(id));
+
+        //If user does not exists then throw UsernameNotFound Exception
+        if (user.isEmpty()) {
+            log.info("No user found with id: " + id);
+            throw new UsernameNotFoundException("User with - " + id + " does not exist");
+        }
+        log.info("User with - " + id + " found from database");
+
+        // Add authorities
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.get().getRole().name());
+        Collection<GrantedAuthority> grantedAuthorities = Collections.singleton(grantedAuthority);
+
+        return new UserInfoService(
+                user.get(),
+                grantedAuthorities
+        );
+    }
 }
