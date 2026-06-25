@@ -13,7 +13,6 @@ public class Mapper {
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .phoneNumber(request.getPhoneNumber())
-                .role(request.getRole())
                 .build();
     }
 

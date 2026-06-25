@@ -52,7 +52,7 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
                 <version>${jjwt.version}</version>
-                <scope>runtime</scope>
+<!--                <scope>runtime</scope>-->
             </dependency>
 
             <dependency>

@@ -46,10 +46,12 @@ public class UserEntity {
     @Column
     private String profileImage;
 
+    @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.ROLE_JOB_SEEKER;
 
+    @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.ACTIVE;

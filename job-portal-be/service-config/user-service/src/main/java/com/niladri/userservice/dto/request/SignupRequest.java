@@ -30,8 +30,8 @@ public class SignupRequest {
 
     private String phoneNumber;
 
-    @NotNull(message = "Role is mandatory")
-    private UserRole role;
+//    @NotNull(message = "Role is mandatory")
+//    private UserRole role;
 
 
 }
