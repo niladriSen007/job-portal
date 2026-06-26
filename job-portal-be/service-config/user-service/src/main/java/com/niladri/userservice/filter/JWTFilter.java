@@ -29,7 +29,7 @@ import java.util.Set;
 public class JWTFilter extends OncePerRequestFilter {
 
     private static final Set<String> WHITELIST = Set.of(
-            "/api/v1/auth/login", "/api/v1/auth/signup"
+            "/api/v1/auth/login", "/api/v1/auth/signup" , "/api/v1/auth/refresh-token"
     );
     private final AppUserDetailsService appUserDetailsService;
     private final JWTService jwtService;

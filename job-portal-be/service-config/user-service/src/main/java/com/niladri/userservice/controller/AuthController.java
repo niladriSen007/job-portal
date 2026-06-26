@@ -4,12 +4,23 @@ import com.niladri.dto.response.ApiResponse;
 import com.niladri.userservice.dto.request.LoginRequest;
 import com.niladri.userservice.dto.request.SignupRequest;
 import com.niladri.userservice.dto.response.AuthResponse;
+import com.niladri.userservice.dto.response.RefreshResponse;
+import com.niladri.userservice.dto.response.SignupResponse;
 import com.niladri.userservice.service.IAuthService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
+import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +31,7 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<AuthResponse>> signup(@RequestBody @Valid SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(@RequestBody @Valid SignupRequest signupRequest) {
         log.info("Signup request received in controller - AuthController");
         return ResponseEntity.ok(ApiResponse.success(authService.signup(signupRequest), 201));
     }
@@ -28,7 +39,33 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
         log.info("Login request received in controller - AuthController");
-        return ResponseEntity.ok(ApiResponse.success(authService.login(loginRequest)));
+        AuthResponse loginResponse = authService.login(loginRequest);
+
+        // Storing the refresh token into the cookie for the next 180 days
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", loginResponse.getRefreshToken())
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofDays(180)) // 180 days
+                .sameSite("Strict")
+                .build();
+
+        // Storing the access token into the cookie for the next 15 minutes
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", loginResponse.getAccessToken())
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofMinutes(15))
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .body(ApiResponse.success(loginResponse, 200));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ApiResponse<RefreshResponse>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(ApiResponse.success(authService.refreshToken(request, response), 200));
     }
 
     @GetMapping("/hi")

@@ -28,6 +28,13 @@ public class JWTService {
         return generateToken(authentication, userId);
     }
 
+    public String generateRefreshToken(Authentication authentication, Long userId) {
+        return Jwts.builder().subject(userId.toString()).issuedAt(new Date()).expiration(
+                        new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30 * 6) // 6 months
+                ).signWith(secretKey)
+                .compact();
+    }
+
     private String generateToken(Authentication authentication, Long userId) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         String roles = populateAuthorities(authorities);
@@ -39,7 +46,7 @@ public class JWTService {
                 .claim("authorities", roles)
                 .claim("userId", userId)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 60))
+                .expiration(new Date(System.currentTimeMillis() + 15 * 60000)) // 15 minute
                 .signWith(secretKey)
                 .compact();
     }

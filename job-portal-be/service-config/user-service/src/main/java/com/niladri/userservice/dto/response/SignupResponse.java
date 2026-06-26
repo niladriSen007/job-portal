@@ -6,9 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AuthResponse {
-    private String accessToken;
-    private String refreshToken;
+public class SignupResponse {
     private String title;
     private String message;
     private UserResponse userResponse;

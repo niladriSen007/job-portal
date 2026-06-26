@@ -1,5 +1,6 @@
 package com.niladri.userservice.entity;
 
+import com.niladri.domain.UserPermission;
 import com.niladri.domain.UserRole;
 import com.niladri.domain.UserStatus;
 import jakarta.persistence.*;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -50,6 +53,10 @@ public class UserEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.ROLE_JOB_SEEKER;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Set<UserPermission> permissions = new HashSet<>();
 
     @Builder.Default
     @Column(nullable = false)

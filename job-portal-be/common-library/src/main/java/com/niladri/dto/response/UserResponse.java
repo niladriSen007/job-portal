@@ -1,11 +1,13 @@
 package com.niladri.dto.response;
 
+import com.niladri.domain.UserPermission;
 import com.niladri.domain.UserRole;
 import com.niladri.domain.UserStatus;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
@@ -18,6 +20,7 @@ public class UserResponse {
     private String phoneNumber;
     private String profileImage;
     private UserRole role;
+    private Set<UserPermission> userPermissions;
     private UserStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoggedInTime;

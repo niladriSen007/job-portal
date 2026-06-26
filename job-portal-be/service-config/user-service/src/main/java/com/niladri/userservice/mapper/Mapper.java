@@ -25,6 +25,7 @@ public class Mapper {
                 .phoneNumber(entity.getPhoneNumber())
                 .profileImage(entity.getProfileImage())
                 .role(entity.getRole())
+                .userPermissions(entity.getPermissions())
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
                 .lastLoggedInTime(entity.getLastLoggedInTime())
