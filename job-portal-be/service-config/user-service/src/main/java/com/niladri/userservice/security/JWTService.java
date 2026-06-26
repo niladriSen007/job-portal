@@ -39,7 +39,7 @@ public class JWTService {
                 .claim("authorities", roles)
                 .claim("userId", userId)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 86400000))
+                .expiration(new Date(System.currentTimeMillis() + 60))
                 .signWith(secretKey)
                 .compact();
     }

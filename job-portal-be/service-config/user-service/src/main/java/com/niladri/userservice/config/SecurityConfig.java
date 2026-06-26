@@ -27,6 +27,8 @@ public class SecurityConfig {
 
     private final AppUserDetailsService appUserDetailsService;
     private final JWTFilter jwtFilter;
+    private final CustomAuthenticationException customAuthenticationException;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,6 +39,9 @@ public class SecurityConfig {
                         sessionManagement ->
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationException)
+                        .accessDeniedHandler(customAccessDeniedHandler))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers(
                                         "/api/v1/auth/signup",

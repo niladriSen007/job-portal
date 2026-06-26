@@ -1,5 +1,6 @@
 package com.niladri.userservice.controller;
 
+import com.niladri.dto.response.ApiResponse;
 import com.niladri.userservice.dto.request.LoginRequest;
 import com.niladri.userservice.dto.request.SignupRequest;
 import com.niladri.userservice.dto.response.AuthResponse;
@@ -19,19 +20,19 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signup(@RequestBody @Valid SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<AuthResponse>> signup(@RequestBody @Valid SignupRequest signupRequest) {
         log.info("Signup request received in controller - AuthController");
-        return ResponseEntity.ok(authService.signup(signupRequest));
+        return ResponseEntity.ok(ApiResponse.success(authService.signup(signupRequest), 201));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
         log.info("Login request received in controller - AuthController");
-        return ResponseEntity.ok(authService.login(loginRequest));
+        return ResponseEntity.ok(ApiResponse.success(authService.login(loginRequest)));
     }
 
     @GetMapping("/hi")
-    public String hi() {
-        return "Hi";
+    public ResponseEntity<ApiResponse<String>> hi() {
+        return ResponseEntity.ok(ApiResponse.success("Hi"));
     }
 }

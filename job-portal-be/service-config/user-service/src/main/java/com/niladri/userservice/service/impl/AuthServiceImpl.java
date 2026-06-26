@@ -18,6 +18,7 @@ import com.niladri.userservice.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -95,6 +96,10 @@ public class AuthServiceImpl implements IAuthService {
 //        Optional<UserEntity> user = authRepository.findByEmail(loginRequest.getEmail());
         UserInfoService principal = (UserInfoService) authentication.getPrincipal();
         Optional<UserEntity> user = authRepository.findByEmail(principal.getUsername());
+
+        if (user.isEmpty())
+            throw new BadCredentialsException("Invalid username or password");
+
         String accessToken = jwtService.generateAccessToken(authentication, user.get().getId());
         user.get().setLastLoggedInTime(LocalDateTime.now());
         authRepository.save(user.get());
