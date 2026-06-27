@@ -13,9 +13,23 @@ services:
       - postgres-user-data:/var/lib/postgresql
     networks:
       - job-portal-network
+  postgres-company:
+    image: postgres:18
+    container_name: postgres-company
+    environment:
+      POSTGRES_DB: job_portal_company_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-company-data:/var/lib/postgresql
+    networks:
+      - job-portal-network
 
 volumes:
   postgres-user-data:
+  postgres-company-data:
 
 networks:
   job-portal-network:

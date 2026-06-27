@@ -16,6 +16,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="job-portal-common-library" />
+        <module name="company-service" />
         <module name="user-service" />
       </profile>
     </annotationProcessing>
@@ -23,6 +24,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="company-service" options="-parameters" />
       <module name="job-portal-common-library" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
