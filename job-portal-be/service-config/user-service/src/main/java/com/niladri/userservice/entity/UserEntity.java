@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
 @Getter
 @Setter
@@ -36,7 +35,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     @Email
     private String email;
 
@@ -76,6 +75,5 @@ public class UserEntity {
     private LocalDateTime deletedAt;
 
     private LocalDateTime suspendedAt;
-
 
 }

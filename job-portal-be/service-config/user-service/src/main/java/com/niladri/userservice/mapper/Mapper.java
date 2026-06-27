@@ -16,6 +16,22 @@ public class Mapper {
                 .build();
     }
 
+    public static UserEntity toUserEntityFromUserResponse(UserResponse response) {
+        return UserEntity.builder()
+                .id(response.getId())
+                .firstName(response.getFirstName())
+                .lastName(response.getLastName())
+                .email(response.getEmail())
+                .phoneNumber(response.getPhoneNumber())
+                .profileImage(response.getProfileImage())
+                .role(response.getRole())
+                .permissions(response.getUserPermissions())
+                .status(response.getStatus())
+                .createdAt(response.getCreatedAt())
+                .lastLoggedInTime(response.getLastLoggedInTime())
+                .build();
+    }
+
     public static UserResponse toUserResponse(UserEntity entity) {
         return UserResponse.builder()
                 .id(entity.getId())

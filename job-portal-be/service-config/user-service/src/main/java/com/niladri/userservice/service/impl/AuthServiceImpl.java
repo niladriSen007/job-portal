@@ -19,6 +19,7 @@ import com.niladri.userservice.security.JWTService;
 import com.niladri.userservice.security.UserInfoService;
 import com.niladri.userservice.service.IAuthService;
 import com.niladri.userservice.service.ISessionService;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
@@ -26,6 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -43,6 +45,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
+import com.niladri.userservice.utils.RolePermissionMapping;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -59,7 +63,8 @@ public class AuthServiceImpl implements IAuthService {
     public SignupResponse signup(SignupRequest signupRequest) {
         log.info("Signup request received in service - AuthServiceImpl");
 
-        // Firstly we will have to check the user email already exists in the database or not
+        // Firstly we will have to check the user email already exists in the database
+        // or not
         Optional<UserEntity> userEntity = authRepository.findByEmail(signupRequest.getEmail());
         if (userEntity.isPresent()) {
             throw new UserAlreadyExistsException("User already exists for the user - " + signupRequest.getEmail());
@@ -72,7 +77,7 @@ public class AuthServiceImpl implements IAuthService {
                 .firstName(signupRequest.getFirstName())
                 .lastName(signupRequest.getLastName())
                 .phoneNumber(signupRequest.getPhoneNumber())
-                .permissions(Set.of(UserPermission.JOB_SEARCH))
+                .permissions(RolePermissionMapping.getPermissionsByRole(UserRole.ROLE_JOB_SEEKER))
                 .lastLoggedInTime(LocalDateTime.now())
                 .build();
 
@@ -97,10 +102,10 @@ public class AuthServiceImpl implements IAuthService {
 
         Authentication authentication = authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
-//        Optional<UserEntity> user = authRepository.findByEmail(loginRequest.getEmail());
+        // Optional<UserEntity> user =
+        // authRepository.findByEmail(loginRequest.getEmail());
         UserInfoService principal = (UserInfoService) authentication.getPrincipal();
         Optional<UserEntity> user = authRepository.findByEmail(principal.getUsername());
 
@@ -123,18 +128,18 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public RefreshResponse refreshToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public RefreshResponse refreshToken(HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse) {
         log.info("Attempting to refresh token");
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies == null || cookies.length == 0) {
             log.warn("No cookies present on refresh-token request");
             throw new AuthenticationServiceException("Refresh token not found");
         }
-        Cookie refreshToken =
-                Arrays.stream(cookies)
-                        .filter(cookie -> cookie.getName().equals("refreshToken"))
-                        .findFirst()
-                        .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found"));
+        Cookie refreshToken = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("refreshToken"))
+                .findFirst()
+                .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found"));
         log.info("Received request to refresh token");
         String refreshTokenValue = refreshToken.getValue();
         log.info("Refresh token value: {}", refreshTokenValue);
@@ -148,13 +153,13 @@ public class AuthServiceImpl implements IAuthService {
         Optional<UserEntity> userFromToken = authRepository.findById(userIdFromToken);
         if (userFromToken.isEmpty())
             throw new AuthenticationServiceException("User not found");
-//            UserDetails userDetails = appUserDetailsService.loadUserByUsername(userFromToken.get().getEmail());
+        // UserDetails userDetails =
+        // appUserDetailsService.loadUserByUsername(userFromToken.get().getEmail());
         if (!jwtService.validateToken(refreshTokenValue)) {
             throw new JwtException("Invalid refresh token");
         }
-        String accessToken =
-                jwtService.generateAccessToken
-                        (SecurityContextHolder.getContext().getAuthentication(), Long.valueOf(userIdFromToken));
+        String accessToken = jwtService.generateAccessToken(SecurityContextHolder.getContext().getAuthentication(),
+                Long.valueOf(userIdFromToken));
         log.info("Refresh token validated and new tokens generated for user: {}", userFromToken.get().getEmail());
         return RefreshResponse.builder()
                 .title("Access token generated successfully")

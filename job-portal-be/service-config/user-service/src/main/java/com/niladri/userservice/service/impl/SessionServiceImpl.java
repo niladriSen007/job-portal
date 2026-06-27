@@ -23,12 +23,12 @@ public class SessionServiceImpl implements ISessionService {
     @Override
     public void generateNewSession(String email, String refreshToken) {
         List<Session> sessionsByUser = sessionRepository.findByUserEmail(email);
-        if(sessionsByUser.size() == MAX_SESSIONS_PER_USER){
+        if (sessionsByUser != null && sessionsByUser.size() == MAX_SESSIONS_PER_USER) {
             sessionsByUser.sort(Comparator.comparing(Session::getLastUsedAt));
             Session oldestSession = sessionsByUser.get(0);
             sessionRepository.delete(oldestSession);
         }
-        Session build = Session.builder().userEmail(email).refreshToken(refreshToken).build();
+        Session build = Session.builder().userEmail(email).refreshToken(refreshToken).lastUsedAt(LocalDateTime.now()).build();
         sessionRepository.save(build);
     }
 
