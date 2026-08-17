@@ -18,6 +18,7 @@
     <modules>
         <module>user-service</module>
         <module>company-service</module>
+        <module>job-service</module>
     </modules>
 
 
